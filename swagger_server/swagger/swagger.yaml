@@ -1,0 +1,68 @@
+openapi: 3.0.0
+info:
+  title: phonee
+  description: phone number allocation for hw5
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/dleigh4/phone/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: http://localhost:8888/v1
+  description: Testing via localhost
+paths:
+  /phone/{number}:
+    get:
+      summary: Requests a specific number to be allotted, which is returned if available;
+        if unavailable, responds with a system-allotted number
+      operationId: phone_number_get
+      parameters:
+      - name: number
+        in: path
+        description: The phone number requested by the user
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Successful response; included number may not match requested
+            (being system-allotted instead)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/phonenumber'
+        "400":
+          description: The requested number is invalid
+        "404":
+          description: Server was unable to allot a number (full registry or processing
+            issue)
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /phone:
+    get:
+      summary: Requests a phone number to be allotted by the server
+      operationId: phone_get
+      responses:
+        "200":
+          description: Successful response, including allotted number
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/phonenumber'
+        "404":
+          description: Server was unable to allot a number (full registry or processing
+            issue)
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+components:
+  schemas:
+    phonenumber:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      example:
+        name: name
+        id: 0
+
